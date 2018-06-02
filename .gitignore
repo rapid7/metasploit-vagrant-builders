@@ -1,0 +1,7 @@
+*.pyc
+/tmp
+/.idea
+/box
+/iso
+/esxi_config.json
+/*.log

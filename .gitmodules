@@ -1,0 +1,3 @@
+[submodule "boxcutter/macos"]
+	path = boxcutter/macos
+	url = https://github.com/boxcutter/macos

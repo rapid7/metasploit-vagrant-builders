@@ -1,0 +1,16 @@
+{
+  "_comment": "Build with from root with `packer build -var-file=templates/macOSBuilder.json boxcutter/macos/macos.json`",
+  "vm_name": "metasploitMacOSBuilder",
+  "cpus": "2",
+  "disk_size": "32000",
+  "iso_url": "../../iso/OSX_InstallESD_10.9.5_13F34.dmg",
+  "memory": "2048",
+  "parallels_guest_os_type": "win-8",
+  "vagrantfile_template": "../../vagrant/vagrantfile-metasploitMacOSBuilder.tpl",
+  "virtualbox_guest_os_type": "MacOS109_64",
+  "vmware_guest_os_type": "darwin13-64",
+  "custom_scripts": [
+    "../../scripts/macos/install_brew_req.sh",
+    "../../scripts/macos/install_rvm_req.sh"
+  ]
+}
