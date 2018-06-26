@@ -1,0 +1,45 @@
+;SetupMgrTag
+[Data]
+    AutoPartition=1
+    MsDosInitiated="0"
+    UnattendedInstall="Yes"
+    AutomaticUpdates="Yes"
+
+[Unattended]
+    UnattendMode=FullUnattended
+    OemSkipEula=Yes
+    OemPreinstall=No
+    TargetPath=\WINDOWS
+    Repartition=Yes
+    UnattendSwitch=Yes
+    AutoActivate=Yes
+
+[GuiUnattended]
+    AdminPassword=vagrant
+    EncryptedAdminPassword=NO
+    OEMSkipRegional=1
+    TimeZone=20
+    OemSkipWelcome=1
+
+[UserData]
+    ProductKey=XXXXX-XXXXX-XXXXX-XXXXX-XXXXX
+    FullName="vagrant"
+    OrgName="vagrant"
+    ComputerName=WinXp
+
+[GuiRunOnce]
+;    Command0=%SystemRoot%\system32\cmd.exe
+
+[Identification]
+    JoinWorkgroup=WORKGROUP
+
+[Networking]
+    InstallDefaultComponents=Yes
+
+[Display]
+    BitsPerPel=8
+    XResolution=1024
+    YResolution=768
+    Flags=0
+    AutoConfirm=1
+
