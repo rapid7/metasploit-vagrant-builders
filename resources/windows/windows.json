@@ -1,5 +1,5 @@
 {
-  "comment": "metasploitWindowsBuilder baseline windows packer template build with 'python buildBoxes.py'",
+  "_comment": "metasploitWindowsBuilder baseline windows packer template build with 'python buildBoxes.py'",
   "builders": [
     {
       "type": "vmware-iso",
@@ -14,7 +14,7 @@
       "ssh_password": "vagrant",
       "ssh_wait_timeout": "2h",
       "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
-      "guest_os_type": "{{user `guest_os_type`}}",
+      "guest_os_type": "{{user `vmware_guest_os_type`}}",
       "tools_upload_flavor": "windows",
       "disk_size": 61440,
       "floppy_files": [
@@ -60,7 +60,7 @@
       "ssh_password": "vagrant",
       "ssh_wait_timeout": "2h",
       "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
-      "guest_os_type": "{{user `guest_os_type`}}",
+      "guest_os_type": "{{user `virtualbox_guest_os_type`}}",
       "disk_size": 61440,
       "vm_name": "{{user `vm_name`}}",
       "floppy_files": [
@@ -123,14 +123,6 @@
       ]
     },
     {
-      "type": "windows-shell",
-      "remote_path": "C:/Windows/Temp/script.bat",
-      "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
-      "scripts/windows": [
-        "./scripts/windows/configs/disable_firewall.bat"
-      ]
-    },
-    {
       "type": "windows-restart"
     },
     {
@@ -149,8 +141,6 @@
       "scripts": [
         "scripts/windows/installs/install_boxstarter.bat",
         "scripts/windows/installs/7zip.bat",
-        "scripts/windows/configs/apply_password_settings.bat",
-        "scripts/windows/configs/create_users.bat",
         "scripts/windows/installs/vcredist2008.bat"
       ]
     },
@@ -186,7 +176,6 @@
       "remote_path": "C:/Windows/Temp/script.bat",
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "scripts": [
-        "scripts/windows/configs/configure_firewall.bat",
         "scripts/windows/installs/vm-guest-tools.bat",
         "scripts/windows/configs/packer_cleanup.bat"
       ]
