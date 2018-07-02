@@ -119,6 +119,7 @@
         "./scripts/windows/configs/update_root_certs.bat",
         "./scripts/windows/configs/vagrant-ssh.bat",
         "./scripts/windows/configs/disable-auto-logon.bat",
+        "./scripts/windows/configs/disable-firewall.bat",
         "./scripts/windows/configs/enable-rdp.bat"
       ]
     },
@@ -152,8 +153,13 @@
       "remote_path": "C:/Windows/Temp/script.bat",
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "scripts": [
+        "scripts/windows/installs/git.bat",
+        "scripts/windows/installs/mingw-64.bat",
+        "scripts/windows/installs/msys2.bat",
         "scripts/windows/installs/java.bat",
-        "scripts/windows/installs/install_ruby.bat"
+        "scripts/windows/installs/install_ruby.bat",
+        "scripts/windows/installs/ruby_devkit.bat",
+        "scripts/windows/installs/vs2013.bat"
       ]
     },
     {
