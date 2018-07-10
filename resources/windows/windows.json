@@ -159,6 +159,7 @@
         "scripts/windows/installs/java.bat",
         "scripts/windows/installs/install_ruby.bat",
         "scripts/windows/installs/ruby_devkit.bat",
+        "scripts/windows/installs/wixtoolset.bat",
         "scripts/windows/installs/vs2013.bat"
       ]
     },
