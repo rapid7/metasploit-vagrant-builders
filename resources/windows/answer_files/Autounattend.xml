@@ -278,11 +278,29 @@
                     <Order>29</Order>
                     <RequiresUserInput>true</RequiresUserInput>
                 </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <CommandLine>%SystemRoot%\System32\powercfg.exe -setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c</CommandLine>
+                    <Description>Set Performace power mode</Description>
+                    <Order>30</Order>
+                    <RequiresUserInput>true</RequiresUserInput>
+                </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <CommandLine>%SystemRoot%\System32\powercfg.exe -change disk-timeout-ac 0</CommandLine>
+                    <Description>Disable disk sleep</Description>
+                    <Order>31</Order>
+                    <RequiresUserInput>true</RequiresUserInput>
+                </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <CommandLine>%SystemRoot%\System32\powercfg.exe -change monitor-timeout-ac 0</CommandLine>
+                    <Description>Disable monitor sleep</Description>
+                    <Order>32</Order>
+                    <RequiresUserInput>true</RequiresUserInput>
+                </SynchronousCommand>
                  <!--WITHOUT WINDOWS UPDATES -->
                 <SynchronousCommand wcm:action="add">
                     <CommandLine>%SystemRoot%\System32\reg.exe add "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" /v NoAutoUpdate /t REG_DWORD /d 1 /f</CommandLine>
                     <Description>Disable Windows Updates</Description>
-                    <Order>30</Order>
+                    <Order>97</Order>
                     <RequiresUserInput>true</RequiresUserInput>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
