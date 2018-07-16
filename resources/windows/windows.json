@@ -1,0 +1,200 @@
+{
+  "_comment": "metasploitWindowsBuilder baseline windows packer template build with 'python buildBoxes.py'",
+  "builders": [
+    {
+      "type": "vmware-iso",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "output_directory": "./tmp/{{user `vm_name`}}-vmware-iso",
+      "headless": false,
+      "boot_wait": "10m",
+      "communicator": "ssh",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_wait_timeout": "2h",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "guest_os_type": "{{user `vmware_guest_os_type`}}",
+      "tools_upload_flavor": "windows",
+      "disk_size": 61440,
+      "floppy_files": [
+        "{{user `autounattend`}}",
+        "./scripts/windows/configs/microsoft-updates.bat",
+        "./scripts/windows/configs/win-updates.ps1",
+        "./scripts/windows/installs/openssh.ps1",
+        "./scripts/windows/installs/install_netfx.ps1",
+        "./resources/windows/certs/oracle-cert.cer",
+        "./resources/windows/certs/gdig2.crt",
+        "./resources/windows/certs/comodorsadomainvalidationsecureserverca.crt",
+        "./resources/windows/certs/comodorsacertificationauthority.crt",
+        "./resources/windows/certs/addtrust_external_ca.cer",
+        "./resources/windows/certs/baltimore_ca.cer",
+        "./resources/windows/certs/digicert.cer",
+        "./resources/windows/certs/equifax.cer",
+        "./resources/windows/certs/globalsign.cer",
+        "./resources/windows/certs/gte_cybertrust.cer",
+        "./resources/windows/certs/microsoft_root_2011.cer",
+        "./resources/windows/certs/thawte_primary_root.cer",
+        "./resources/windows/certs/utn-userfirst.cer"
+      ],
+      "vm_name": "{{user `vm_name`}}",
+      "vmx_data": {
+        "cpuid.coresPerSocket": "2",
+        "memsize": "4096",
+        "numvcpus": "2",
+        "scsi0.virtualDev": "lsisas1068",
+        "virtualHW.version": 10,
+        "tools.upgrade.policy": "manual"
+      }
+    },
+    {
+      "type": "virtualbox-iso",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "output_directory": "./tmp/{{user `vm_name`}}-virtualbox-iso",
+      "headless": false,
+      "boot_wait": "10m",
+      "communicator": "ssh",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_wait_timeout": "2h",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "guest_os_type": "{{user `virtualbox_guest_os_type`}}",
+      "disk_size": 61440,
+      "vm_name": "{{user `vm_name`}}",
+      "floppy_files": [
+        "{{user `autounattend`}}",
+        "./scripts/windows/configs/microsoft-updates.bat",
+        "./scripts/windows/configs/win-updates.ps1",
+        "./scripts/windows/installs/openssh.ps1",
+        "./scripts/windows/installs/install_netfx.ps1",
+        "./resources/windows/certs/oracle-cert.cer",
+        "./resources/windows/certs/gdig2.crt",
+        "./resources/windows/certs/comodorsadomainvalidationsecureserverca.crt",
+        "./resources/windows/certs/comodorsacertificationauthority.crt",
+        "./resources/windows/certs/addtrust_external_ca.cer",
+        "./resources/windows/certs/baltimore_ca.cer",
+        "./resources/windows/certs/digicert.cer",
+        "./resources/windows/certs/equifax.cer",
+        "./resources/windows/certs/globalsign.cer",
+        "./resources/windows/certs/gte_cybertrust.cer",
+        "./resources/windows/certs/microsoft_root_2011.cer",
+        "./resources/windows/certs/thawte_primary_root.cer",
+        "./resources/windows/certs/utn-userfirst.cer"
+      ],
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          "4096"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          "2"
+        ]
+      ]
+    }
+  ],
+"provisioners": [
+    {
+      "type": "file",
+      "source": "scripts",
+      "destination": "C:/vagrant",
+      "pause_before": "1m"
+    },
+    {
+      "type": "file",
+      "source": "resources",
+      "destination": "C:/vagrant"
+    },
+    {
+      "type": "shell",
+      "remote_path": "/tmp/script.bat",
+      "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
+      "scripts": [
+        "./scripts/windows/configs/update_root_certs.bat",
+        "./scripts/windows/configs/vagrant-ssh.bat",
+        "./scripts/windows/configs/disable-auto-logon.bat",
+        "./scripts/windows/configs/disable-firewall.bat",
+        "./scripts/windows/configs/enable-rdp.bat"
+      ]
+    },
+    {
+      "type": "windows-restart"
+    },
+    {
+      "type":"powershell",
+      "inline": [
+        "$env:chocolateyVersion = '0.10.8'; iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))"
+      ]
+    },
+    {
+      "type": "windows-restart"
+    },
+    {
+      "type": "windows-shell",
+      "remote_path": "C:/Windows/Temp/script.bat",
+      "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
+      "scripts": [
+        "scripts/windows/installs/install_boxstarter.bat",
+        "scripts/windows/installs/7zip.bat",
+        "scripts/windows/installs/vcredist2008.bat"
+      ]
+    },
+    {
+      "type": "windows-restart"
+    },
+    {
+      "type": "windows-shell",
+      "remote_path": "C:/Windows/Temp/script.bat",
+      "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
+      "scripts": [
+        "scripts/windows/installs/git.bat",
+        "scripts/windows/installs/mingw-64.bat",
+        "scripts/windows/installs/msys2.bat",
+        "scripts/windows/installs/java.bat",
+        "scripts/windows/installs/install_ruby.bat",
+        "scripts/windows/installs/ruby_devkit.bat",
+        "scripts/windows/installs/wixtoolset.bat",
+        "scripts/windows/installs/vs2013.bat"
+      ]
+    },
+    {
+      "type": "windows-restart"
+    },
+    {
+      "type": "windows-shell",
+      "remote_path": "C:/Windows/Temp/script.bat",
+      "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
+      "scripts": [
+        "scripts/windows/installs/python2.bat",
+        "scripts/windows/installs/python3.bat"
+      ]
+    },
+    {
+      "type": "windows-restart"
+    },
+    {
+      "type": "windows-shell",
+      "remote_path": "C:/Windows/Temp/script.bat",
+      "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
+      "scripts": [
+        "scripts/windows/installs/vm-guest-tools.bat",
+        "scripts/windows/configs/set_path.bat",
+        "scripts/windows/configs/packer_cleanup.bat"
+      ]
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "keep_input_artifact": false,
+      "output": "{{user `output`}}",
+      "vagrantfile_template": "{{user `vagrantfile_template`}}"
+    }
+  ]
+}

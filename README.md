@@ -4,6 +4,7 @@ To build these systems:
 * install `virtualbox` and `packer` and `python`
 * `pip install vm-automation`
 * `pip install tqdm`
+* `pip install python-packer`
 * execute `python buildBoxes.py`
 
 Build systems for macOS can only be created on macOS and require obtaining installers, currently 10.9 installer is required to exist in the `iso` path.

@@ -1,0 +1,15 @@
+{
+  "packer_template": "windows.json",
+  "packer_template_path": "resources/windows",
+  "run_in_path": false,
+  "iso_url": "./iso/en_windows_10_consumer_editions_version_1803_updated_march_2018_x64_dvd_12063379.iso",
+  "iso_checksum": "986e2e17cf6b0b49141cd15699768e6e",
+  "iso_checksum_type": "md5",
+  "autounattend": "./resources/windows/answer_files/Autounattend.xml",
+  "output": "./box/",
+  "vagrantfile_template": "./vagrant/vagrantfile-metasploitWindowsBuilder.tpl",
+  "vmware_guest_os_type": "windows9-64",
+  "virtualbox_guest_os_type": "Windows10_64",
+  "vm_name": "metasploitWindowsBuilder",
+  "os_key": "W269N-WFGWX-YVC9B-4J6C9-T83GX"
+}
