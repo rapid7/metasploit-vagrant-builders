@@ -72,7 +72,6 @@ def build_base(packer_var_file, root_path, replace_existing=False, vmServer=None
         p.build(parallel=True, debug=False, force=False)
     except sh.ErrorReturnCode:
         print "Error: build of " + prependString + vm_name + " returned non-zero"
-        return p
     os.chdir(abs_root)
 
     return p
