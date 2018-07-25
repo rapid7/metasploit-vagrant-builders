@@ -6,7 +6,6 @@ Vagrant.configure("2") do |config|
     config.vm.box = "metasploitMacOSBuilder"
 
     config.vm.provider :virtualbox do |v, override|
-      v.gui = true
       v.customize ["modifyvm", :id, "--audiocontroller", "hda"]
       v.customize ["modifyvm", :id, "--boot1", "dvd"]
       v.customize ["modifyvm", :id, "--boot2", "disk"]
@@ -21,7 +20,6 @@ Vagrant.configure("2") do |config|
 
     ["vmware_fusion", "vmware_workstation"].each do |provider| 
       config.vm.provider provider do |v, override|
-        v.gui = true
         v.vmx["memsize"] = "2048"
         v.vmx["numvcpus"] = "2"
         v.vmx["firmware"] = "efi"
