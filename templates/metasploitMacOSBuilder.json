@@ -12,7 +12,7 @@
   "memory": "2048",
   "parallels_guest_os_type": "win-8",
   "vagrantfile_template": "../../vagrant/vagrantfile-metasploitMacOSBuilder.tpl",
-  "virtualbox_guest_os_type": "MacOS109_64",
+  "virtualbox_guest_os_type": "MacOS1010_64",
   "vmware_guest_os_type": "darwin13-64",
   "custom_scripts": [
     "../../scripts/macos/install_brew_req.sh",
