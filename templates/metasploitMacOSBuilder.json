@@ -7,10 +7,12 @@
   "cpus": "2",
   "disk_size": "32000",
   "iso_url": "../../iso/OSX_InstallESD_10.9.5_13F34.dmg",
+  "iso_checksum": "d626e6247b38c2bfa71cc9a8b5397803",
+  "iso_checksum_type": "md5",
   "memory": "2048",
   "parallels_guest_os_type": "win-8",
   "vagrantfile_template": "../../vagrant/vagrantfile-metasploitMacOSBuilder.tpl",
-  "virtualbox_guest_os_type": "MacOS109_64",
+  "virtualbox_guest_os_type": "MacOS1011_64",
   "vmware_guest_os_type": "darwin13-64",
   "custom_scripts": [
     "../../scripts/macos/install_brew_req.sh",

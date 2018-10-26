@@ -185,6 +185,7 @@
       "scripts": [
         "scripts/windows/installs/vm-guest-tools.bat",
         "scripts/windows/configs/set_path.bat",
+        "scripts/windows/configs/prep_omnibus.bat",
         "scripts/windows/configs/packer_cleanup.bat"
       ]
     }

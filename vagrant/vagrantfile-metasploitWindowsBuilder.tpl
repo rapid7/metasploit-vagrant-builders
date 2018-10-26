@@ -6,12 +6,11 @@ Vagrant.configure("2") do |config|
     config.vm.box = "metasploitWindowsBuilder"
 
     config.vm.provider :virtualbox do |v, override|
-      v.gui = true
       v.customize ["modifyvm", :id, "--audiocontroller", "hda"]
       v.customize ["modifyvm", :id, "--boot1", "dvd"]
       v.customize ["modifyvm", :id, "--boot2", "disk"]
       v.customize ["modifyvm", :id, "--chipset", "ich9"]
-      v.customize ["modifyvm", :id, "--firmware", "efi"]
+      v.customize ["modifyvm", :id, "--firmware", "bios"]
       v.customize ["modifyvm", :id, "--hpet", "on"]
       v.customize ["modifyvm", :id, "--keyboard", "usb"]
       v.customize ["modifyvm", :id, "--memory", "2048"]
@@ -21,11 +20,9 @@ Vagrant.configure("2") do |config|
 
     ["vmware_fusion", "vmware_workstation"].each do |provider| 
       config.vm.provider provider do |v, override|
-        v.gui = true
         v.vmx["memsize"] = "2048"
         v.vmx["numvcpus"] = "2"
-        v.vmx["firmware"] = "efi"
-        v.vmx["keyboardAndMouseProfile"] = "macProfile"
+        v.vmx["firmware"] = "bios"
         v.vmx["smc.present"] = "TRUE"
         v.vmx["hpet0.present"] = "TRUE"
         v.vmx["ich7m.present"] = "TRUE"

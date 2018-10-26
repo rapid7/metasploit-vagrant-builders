@@ -21,6 +21,13 @@ class packerMod:
                     "output": template['output']
                 })
                 break
+        for builder in self.local_packer['builders']:
+            if builder['type'] == "vmware-iso":
+                builder.update({
+                    "iso_url": "{{ user `iso_url` }}",
+                    "iso_checksum_type": "{{ user `iso_checksum_type` }}",
+                    "iso_checksum": "{{ user `iso_checksum` }}",
+                })
 
     def use_esxi_config(self):
         for builder in self.local_packer['builders']:
