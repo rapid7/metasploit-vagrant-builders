@@ -7,5 +7,5 @@ To build these systems:
 * `pip install python-packer`
 * execute `python buildBoxes.py`
 
-Build systems for macOS can only be created on macOS. Installers are obtained from r7 controlled s3 bucket. 
+Build systems for macOS can only be created on macOS.
 
