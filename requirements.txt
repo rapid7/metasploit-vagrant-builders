@@ -1,0 +1,3 @@
+vm-automation ~= 0.1.7
+python-packer ~= 0.1.2
+tqdm
