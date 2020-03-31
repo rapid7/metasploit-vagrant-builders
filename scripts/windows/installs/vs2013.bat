@@ -1,3 +1,3 @@
 chocolatey feature enable -n=allowGlobalConfirmation
-choco install visualstudiocommunity2013
+choco install visualstudioexpress2013windows
 chocolatey feature disable -n=allowGlobalConfirmation

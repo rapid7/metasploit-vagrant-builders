@@ -129,7 +129,7 @@
     {
       "type":"powershell",
       "inline": [
-        "$env:chocolateyVersion = '0.10.8'; iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))"
+        "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))"
       ]
     },
     {
@@ -155,7 +155,17 @@
       "scripts": [
         "scripts/windows/installs/git.bat",
         "scripts/windows/installs/mingw-64.bat",
-        "scripts/windows/installs/msys2.bat",
+        "scripts/windows/installs/msys2.bat"
+      ]
+    },
+    {
+      "type": "windows-restart"
+    },
+    {
+      "type": "windows-shell",
+      "remote_path": "C:/Windows/Temp/script.bat",
+      "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
+      "scripts": [
         "scripts/windows/installs/java.bat",
         "scripts/windows/installs/install_ruby.bat",
         "scripts/windows/installs/ruby_devkit.bat",
