@@ -1,3 +1,0 @@
-chocolatey feature enable -n=allowGlobalConfirmation
-choco install visualstudioexpress2013windowsdesktop
-chocolatey feature disable -n=allowGlobalConfirmation
