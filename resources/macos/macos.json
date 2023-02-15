@@ -1,0 +1,97 @@
+{
+  "_command": "Build with `packer build macos.json`",
+  "builders": [
+    {
+      "communicator": "ssh",
+      "source_path": "ekai-upt/macos-catalina",
+      "box_version": "2020-10-14",
+      "provider": "{{ user `vagrant_provider` }}",
+      "output_dir": "box/{{.Provider}}/{{user `vm_name`}}-{{user `version`}}.box",
+      "type": "vagrant"
+    }
+  ],
+  "provisioners": [
+    {
+      "destination": "/private/tmp/set_kcpassword.py",
+      "source": "boxcutter/macos/script/support/set_kcpassword.py",
+      "type": "file"
+    },
+    {
+      "environment_vars": [
+        "AUTOLOGIN={{user `autologin`}}",
+        "UPDATE={{user `update`}}",
+        "INSTALL_XCODE_CLI_TOOLS={{user `install_xcode_cli_tools`}}",
+        "INSTALL_VAGRANT_KEYS={{user `install_vagrant_keys`}}",
+        "SSH_USERNAME={{ user `ssh_username` }}",
+        "SSH_PASSWORD={{ user `ssh_password` }}"
+      ],
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -S bash '{{ .Path }}'",
+      "expect_disconnect": true,
+      "scripts": [
+        "boxcutter/macos/script/vagrant.sh",
+        "boxcutter/macos/script/vmware.sh",
+        "boxcutter/macos/script/parallels.sh",
+        "boxcutter/macos/script/add-network-interface-detection.sh",
+        "boxcutter/macos/script/energy.sh",
+        "boxcutter/macos/script/autologin.sh",
+        "boxcutter/macos/script/update.sh",
+        "boxcutter/macos/script/xcode-cli-tools.sh"
+      ],
+      "start_retry_timeout": "45m",
+      "type": "shell"
+    },
+    {
+      "environment_vars": [
+        "AUTOLOGIN={{user `autologin`}}",
+        "UPDATE={{user `update`}}",
+        "INSTALL_XCODE_CLI_TOOLS={{user `install_xcode_cli_tools`}}",
+        "INSTALL_VAGRANT_KEYS={{user `install_vagrant_keys`}}",
+        "SSH_USERNAME={{ user `ssh_username` }}",
+        "SSH_PASSWORD={{ user `ssh_password` }}"
+      ],
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -S bash '{{ .Path }}'",
+      "expect_disconnect": true,
+      "scripts": [
+        "scripts/macos/install_brew_req.sh",
+        "scripts/macos/install_rvm_req.sh",
+      ],
+      "start_retry_timeout": "45m",
+      "type": "shell"
+    }
+    {
+      "environment_vars": [
+        "AUTOLOGIN={{user `autologin`}}",
+        "UPDATE={{user `update`}}",
+        "INSTALL_XCODE_CLI_TOOLS={{user `install_xcode_cli_tools`}}",
+        "INSTALL_VAGRANT_KEYS={{user `install_vagrant_keys`}}",
+        "SSH_USERNAME={{ user `ssh_username` }}",
+        "SSH_PASSWORD={{ user `ssh_password` }}"
+      ],
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -S bash '{{ .Path }}'",
+      "expect_disconnect": true,
+      "scripts": [
+        "boxcutter/macos/script/minimize.sh"
+      ],
+      "start_retry_timeout": "10000s",
+      "type": "shell"
+    }
+  ],
+  "variables": {
+    "autologin": "true",
+    "cpus": "1",
+    "disk_size": "65536",
+    "install_vagrant_keys": "true",
+    "install_xcode_cli_tools": "true",
+    "memory": "2048",
+    "parallels_guest_os_type": "win-8",
+    "ssh_password": "vagrant",
+    "ssh_username": "vagrant",
+    "update": "true",
+    "vagrantfile_template": "",
+    "version": "0.1.0",
+    "vm_name": "macos1015",
+    "virtualbox_guest_os_type": "MacOS1015_64",
+    "vmware_guest_os_type": "darwin18-64",
+    "vagrant_provider": "vmware_desktop"
+  }
+}

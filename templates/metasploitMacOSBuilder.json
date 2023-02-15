@@ -1,21 +1,14 @@
 {
-  "_comment": "Build with from root with `packer build -var-file=templates/macOSBuilder.json boxcutter/macos/macos.json`",
+  "_comment": "Build with from root with `packer build -var-file=templates/metasploitMacOSBuilder.json resources/macos/macos.json`",
   "packer_template": "macos.json",
-  "packer_template_path": "boxcutter/macos",
-  "run_in_path": true,
+  "packer_template_path": "resources/macos",
+  "run_in_path": false,
   "vm_name": "metasploitMacOSBuilder",
   "cpus": "2",
   "disk_size": "32000",
-  "iso_url": "../../iso/OSX_InstallESD_10.11.6_15G31.dmg",
-  "iso_checksum": "d626e6247b38c2bfa71cc9a8b5397803",
-  "iso_checksum_type": "md5",
   "memory": "2048",
   "parallels_guest_os_type": "win-8",
-  "vagrantfile_template": "../../vagrant/vagrantfile-metasploitMacOSBuilder.tpl",
-  "virtualbox_guest_os_type": "MacOS1011_64",
-  "vmware_guest_os_type": "darwin13-64",
-  "custom_scripts": [
-    "../../scripts/macos/install_brew_req.sh",
-    "../../scripts/macos/install_rvm_req.sh"
-  ]
+  "vagrantfile_template": "vagrant/vagrantfile-metasploitMacOSBuilder.tpl",
+  "virtualbox_guest_os_type": "MacOS1015_64",
+  "vmware_guest_os_type": "darwin18-64"
 }

@@ -4,4 +4,4 @@ su vagrant -c 'gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C27546
 su vagrant -c '\curl -sSL https://get.rvm.io | bash -s stable --ruby'
 
 su vagrant -c '/bin/bash -l -c "rvm install 2.5.3"'
-su vagrant -c '/bin/bash -l -c "rvm use 2.5.3; gem install bundler"'
+su vagrant -c '/bin/bash -l -c "rvm use 2.5.3; gem install bundler -v2.1.4"'
