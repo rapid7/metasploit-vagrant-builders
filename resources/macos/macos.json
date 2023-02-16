@@ -18,9 +18,7 @@
     },
     {
       "environment_vars": [
-        "AUTOLOGIN={{user `autologin`}}",
         "UPDATE={{user `update`}}",
-        "INSTALL_XCODE_CLI_TOOLS={{user `install_xcode_cli_tools`}}",
         "INSTALL_VAGRANT_KEYS={{user `install_vagrant_keys`}}",
         "SSH_USERNAME={{ user `ssh_username` }}",
         "SSH_PASSWORD={{ user `ssh_password` }}"
@@ -34,8 +32,7 @@
         "boxcutter/macos/script/add-network-interface-detection.sh",
         "boxcutter/macos/script/energy.sh",
         "boxcutter/macos/script/autologin.sh",
-        "boxcutter/macos/script/update.sh",
-        "boxcutter/macos/script/xcode-cli-tools.sh"
+        "boxcutter/macos/script/update.sh"
       ],
       "start_retry_timeout": "45m",
       "type": "shell"
@@ -44,14 +41,27 @@
       "environment_vars": [
         "AUTOLOGIN={{user `autologin`}}",
         "UPDATE={{user `update`}}",
-        "INSTALL_XCODE_CLI_TOOLS={{user `install_xcode_cli_tools`}}",
-        "INSTALL_VAGRANT_KEYS={{user `install_vagrant_keys`}}",
         "SSH_USERNAME={{ user `ssh_username` }}",
         "SSH_PASSWORD={{ user `ssh_password` }}"
       ],
       "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -S bash '{{ .Path }}'",
       "expect_disconnect": true,
       "scripts": [
+        "boxcutter/macos/script/update.sh"
+      ],
+      "start_retry_timeout": "45m",
+      "type": "shell"
+    },
+    {
+      "environment_vars": [
+        "INSTALL_XCODE_CLI_TOOLS={{user `install_xcode_cli_tools`}}",
+        "SSH_USERNAME={{ user `ssh_username` }}",
+        "SSH_PASSWORD={{ user `ssh_password` }}"
+      ],
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -S bash '{{ .Path }}'",
+      "expect_disconnect": true,
+      "scripts": [
+        "boxcutter/macos/script/xcode-cli-tools.sh",
         "scripts/macos/install_brew_req.sh",
         "scripts/macos/install_rvm_req.sh"
       ],
@@ -61,9 +71,6 @@
     {
       "environment_vars": [
         "AUTOLOGIN={{user `autologin`}}",
-        "UPDATE={{user `update`}}",
-        "INSTALL_XCODE_CLI_TOOLS={{user `install_xcode_cli_tools`}}",
-        "INSTALL_VAGRANT_KEYS={{user `install_vagrant_keys`}}",
         "SSH_USERNAME={{ user `ssh_username` }}",
         "SSH_PASSWORD={{ user `ssh_password` }}"
       ],
