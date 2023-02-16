@@ -2,19 +2,8 @@
   "_comment": "metasploitWindowsBuilder baseline windows packer template build with 'python buildBoxes.py'",
   "builders": [
     {
-      "type": "vmware-iso",
-      "iso_url": "{{user `iso_url`}}",
-      "iso_checksum_type": "{{user `iso_checksum_type`}}",
-      "iso_checksum": "{{user `iso_checksum`}}",
-      "output_directory": "./tmp/{{user `vm_name`}}-vmware-iso",
-      "headless": false,
       "boot_wait": "10m",
       "communicator": "ssh",
-      "ssh_username": "vagrant",
-      "ssh_password": "vagrant",
-      "ssh_timeout": "2h",
-      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
-      "guest_os_type": "{{user `vmware_guest_os_type`}}",
       "disk_size": 61440,
       "floppy_files": [
         "{{user `autounattend`}}",
@@ -36,32 +25,30 @@
         "./resources/windows/certs/thawte_primary_root.cer",
         "./resources/windows/certs/utn-userfirst.cer"
       ],
+      "guest_os_type": "{{user `vmware_guest_os_type`}}",
+      "headless": false,
+      "iso_checksum": "{{user `iso_checksum_type`}}:{{user `iso_checksum`}}",
+      "iso_url": "{{user `iso_url`}}",
+      "output_directory": "./tmp/{{user `vm_name`}}-vmware-iso",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "ssh_password": "vagrant",
+      "ssh_timeout": "2h",
+      "ssh_username": "vagrant",
+      "type": "vmware-iso",
       "vm_name": "{{user `vm_name`}}",
       "vmx_data": {
         "cpuid.coresPerSocket": "2",
         "memsize": "4096",
         "numvcpus": "2",
         "scsi0.virtualDev": "lsisas1068",
-        "virtualHW.version": 10,
-        "tools.upgrade.policy": "manual"
+        "tools.upgrade.policy": "manual",
+        "virtualHW.version": 10
       }
     },
     {
-      "type": "virtualbox-iso",
-      "iso_url": "{{user `iso_url`}}",
-      "iso_checksum_type": "{{user `iso_checksum_type`}}",
-      "iso_checksum": "{{user `iso_checksum`}}",
-      "output_directory": "./tmp/{{user `vm_name`}}-virtualbox-iso",
-      "headless": false,
       "boot_wait": "10m",
       "communicator": "ssh",
-      "ssh_username": "vagrant",
-      "ssh_password": "vagrant",
-      "ssh_wait_timeout": "2h",
-      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
-      "guest_os_type": "{{user `virtualbox_guest_os_type`}}",
       "disk_size": 61440,
-      "vm_name": "{{user `vm_name`}}",
       "floppy_files": [
         "{{user `autounattend`}}",
         "./scripts/windows/configs/microsoft-updates.bat",
@@ -82,6 +69,16 @@
         "./resources/windows/certs/thawte_primary_root.cer",
         "./resources/windows/certs/utn-userfirst.cer"
       ],
+      "guest_os_type": "{{user `virtualbox_guest_os_type`}}",
+      "headless": false,
+      "iso_checksum": "{{user `iso_checksum_type`}}:{{user `iso_checksum`}}",
+      "iso_url": "{{user `iso_url`}}",
+      "output_directory": "./tmp/{{user `vm_name`}}-virtualbox-iso",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "ssh_password": "vagrant",
+      "ssh_timeout": "2h",
+      "ssh_username": "vagrant",
+      "type": "virtualbox-iso",
       "vboxmanage": [
         [
           "modifyvm",
@@ -95,124 +92,126 @@
           "--cpus",
           "2"
         ]
-      ]
+      ],
+      "vm_name": "{{user `vm_name`}}"
     }
   ],
-"provisioners": [
+  "post-processors": [
     {
-      "type": "file",
-      "source": "scripts",
+      "keep_input_artifact": false,
+      "output": "{{user `output`}}",
+      "type": "vagrant",
+      "vagrantfile_template": "{{user `vagrantfile_template`}}"
+    }
+  ],
+  "provisioners": [
+    {
       "destination": "C:/vagrant",
-      "pause_before": "1m"
+      "pause_before": "1m",
+      "source": "scripts",
+      "type": "file"
     },
     {
-      "type": "file",
+      "destination": "C:/vagrant",
       "source": "resources",
-      "destination": "C:/vagrant"
+      "type": "file"
     },
     {
-      "type": "shell",
-      "remote_path": "/tmp/script.bat",
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
+      "remote_path": "/tmp/script.bat",
       "scripts": [
         "./scripts/windows/configs/update_root_certs.bat",
         "./scripts/windows/configs/vagrant-ssh.bat",
         "./scripts/windows/configs/disable-auto-logon.bat",
         "./scripts/windows/configs/disable-firewall.bat",
         "./scripts/windows/configs/enable-rdp.bat"
-      ]
+      ],
+      "type": "shell"
     },
     {
       "type": "windows-restart"
     },
     {
-      "type":"powershell",
       "inline": [
         "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))"
-      ]
+      ],
+      "type": "powershell"
     },
     {
       "type": "windows-restart"
     },
     {
-      "type": "windows-shell",
-      "remote_path": "C:/Windows/Temp/script.bat",
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
+      "remote_path": "C:/Windows/Temp/script.bat",
       "scripts": [
         "scripts/windows/installs/install_boxstarter.bat",
         "scripts/windows/installs/7zip.bat",
         "scripts/windows/installs/vcredist2008.bat"
-      ]
+      ],
+      "type": "windows-shell"
     },
     {
       "type": "windows-restart"
     },
     {
-      "type": "windows-shell",
-      "remote_path": "C:/Windows/Temp/script.bat",
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
+      "remote_path": "C:/Windows/Temp/script.bat",
       "scripts": [
         "scripts/windows/installs/git.bat",
         "scripts/windows/installs/mingw-64.bat",
         "scripts/windows/installs/msys2.bat"
-      ]
+      ],
+      "type": "windows-shell"
     },
     {
       "type": "windows-restart"
     },
     {
-      "type": "windows-shell",
-      "remote_path": "C:/Windows/Temp/script.bat",
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
+      "remote_path": "C:/Windows/Temp/script.bat",
       "scripts": [
         "scripts/windows/installs/java.bat",
         "scripts/windows/installs/install_ruby.bat",
         "scripts/windows/installs/ruby_devkit.bat",
         "scripts/windows/installs/wixtoolset.bat"
-      ]
+      ],
+      "type": "windows-shell"
     },
     {
       "type": "windows-restart"
     },
     {
-      "type": "powershell",
       "scripts": [
         "scripts/windows/installs/vs2013.ps1"
-      ]
+      ],
+      "type": "powershell"
     },
     {
       "type": "windows-restart"
     },
     {
-      "type": "windows-shell",
-      "remote_path": "C:/Windows/Temp/script.bat",
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
+      "remote_path": "C:/Windows/Temp/script.bat",
       "scripts": [
         "scripts/windows/installs/python2.bat",
         "scripts/windows/installs/python3.bat"
-      ]
+      ],
+      "type": "windows-shell"
     },
     {
       "type": "windows-restart"
     },
     {
-      "type": "windows-shell",
-      "remote_path": "C:/Windows/Temp/script.bat",
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
+      "remote_path": "C:/Windows/Temp/script.bat",
       "scripts": [
         "scripts/windows/installs/vm-guest-tools.bat",
         "scripts/windows/configs/set_path.bat",
         "scripts/windows/configs/prep_omnibus.bat",
         "scripts/windows/configs/packer_cleanup.bat"
-      ]
-    }
-  ],
-  "post-processors": [
-    {
-      "type": "vagrant",
-      "keep_input_artifact": false,
-      "output": "{{user `output`}}",
-      "vagrantfile_template": "{{user `vagrantfile_template`}}"
+      ],
+      "type": "windows-shell"
     }
   ]
 }
+

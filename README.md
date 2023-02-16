@@ -7,4 +7,6 @@ To build these systems:
 * execute `./buildBoxes.sh`
 
 Build systems for macOS can only be created on macOS.
+In some cases importing the seed macOS source box currently from vagrantcloud into you vagrant enviornent may be need.
 
+The project is currently utilizing a prebuild macinabox image referenced in `resources/macos/macos.json`
