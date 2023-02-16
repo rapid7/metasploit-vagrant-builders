@@ -2,7 +2,6 @@
   "_comment": "Build with from root with `packer build -var-file=templates/metasploitMacOSBuilder.json resources/macos/macos.json`",
   "packer_template": "macos.json",
   "packer_template_path": "resources/macos",
-  "run_in_path": "false",
   "vm_name": "metasploitMacOSBuilder",
   "cpus": "2",
   "disk_size": "32000",
