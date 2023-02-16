@@ -15,12 +15,13 @@ class packerMod:
                     for script in template['custom_scripts']:
                         provisioner['scripts'].append(script)
                     break
-        for processor in self.local_packer["post-processors"]:
-            if processor['type'] == 'vagrant':
-                processor.update({
-                    "output": template['output']
-                })
-                break
+        if self.local_packer.has_key("post-processors"):
+            for processor in self.local_packer["post-processors"]:
+                if processor['type'] == 'vagrant':
+                    processor.update({
+                        "output": template['output']
+                    })
+                    break
         for builder in self.local_packer['builders']:
             if builder['type'] == "vmware-iso":
                 builder.update({
