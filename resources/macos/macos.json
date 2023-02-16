@@ -4,7 +4,7 @@
     {
       "communicator": "ssh",
       "source_path": "ekai-upt/macos-catalina",
-      "box_version": "2020-10-14",
+      "box_version": "2020.08.21",
       "provider": "{{ user `vagrant_provider` }}",
       "output_dir": "box/{{ user `vagrant_provider` }}/{{user `vm_name`}}-{{user `version`}}.box",
       "type": "vagrant"
@@ -88,7 +88,6 @@
     "ssh_username": "vagrant",
     "update": "true",
     "vagrantfile_template": "",
-    "version": "0.1.0",
     "vm_name": "macos1015",
     "virtualbox_guest_os_type": "MacOS1015_64",
     "vmware_guest_os_type": "darwin18-64",

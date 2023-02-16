@@ -1,7 +1,5 @@
 {
   "_comment": "Build with from root with `packer build -var-file=templates/metasploitMacOSBuilder.json resources/macos/macos.json`",
-  "packer_template": "macos.json",
-  "packer_template_path": "resources/macos",
   "vm_name": "metasploitMacOSBuilder",
   "cpus": "2",
   "disk_size": "32000",
@@ -9,5 +7,6 @@
   "parallels_guest_os_type": "win-8",
   "vagrantfile_template": "vagrant/vagrantfile-metasploitMacOSBuilder.tpl",
   "virtualbox_guest_os_type": "MacOS1015_64",
-  "vmware_guest_os_type": "darwin18-64"
+  "vmware_guest_os_type": "darwin18-64",
+  "version": "1.0.4"
 }
