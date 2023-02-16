@@ -53,11 +53,11 @@
       "expect_disconnect": true,
       "scripts": [
         "scripts/macos/install_brew_req.sh",
-        "scripts/macos/install_rvm_req.sh",
+        "scripts/macos/install_rvm_req.sh"
       ],
       "start_retry_timeout": "45m",
       "type": "shell"
-    }
+    },
     {
       "environment_vars": [
         "AUTOLOGIN={{user `autologin`}}",
