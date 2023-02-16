@@ -6,7 +6,7 @@
       "source_path": "ekai-upt/macos-catalina",
       "box_version": "2020-10-14",
       "provider": "{{ user `vagrant_provider` }}",
-      "output_dir": "box/{{.Provider}}/{{user `vm_name`}}-{{user `version`}}.box",
+      "output_dir": "box/{{ user `vagrant_provider` }}/{{user `vm_name`}}-{{user `version`}}.box",
       "type": "vagrant"
     }
   ],
