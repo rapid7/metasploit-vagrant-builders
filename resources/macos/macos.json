@@ -6,8 +6,24 @@
       "source_path": "ekai-upt/macos-catalina",
       "box_version": "2020.08.21",
       "provider": "{{ user `vagrant_provider` }}",
-      "output_dir": "box/{{ user `vagrant_provider` }}/{{user `vm_name`}}-{{user `version`}}.box",
+      "output_dir": "box/{{ user `vagrant_provider` }}/{{user `vm_name`}}-{{user `version`}}",
       "type": "vagrant"
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "shell-local",
+      "only_on": ["linux", "darwin"],
+      "inline": ["mv box/{{ user `vagrant_provider` }}/{{user `vm_name`}}-{{user `version`}}/package.box box/{{ user `vagrant_provider` }}/{{user `vm_name`}}-{{user `version`}}.box"]
+    },
+    {
+      "type": "shell-local",
+      "only_on": ["windows"],
+      "inline": ["move box/{{ user `vagrant_provider` }}/{{user `vm_name`}}-{{user `version`}}/package.box box/{{ user `vagrant_provider` }}/{{user `vm_name`}}-{{user `version`}}.box"]
+    },
+    {
+      "type": "shell-local",
+      "inline": ["rm -rf box/{{ user `vagrant_provider` }}/{{user `vm_name`}}-{{user `version`}}"]
     }
   ],
   "provisioners": [
