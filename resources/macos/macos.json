@@ -41,7 +41,8 @@
       "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -S bash '{{ .Path }}'",
       "expect_disconnect": true,
       "scripts": [
-        "scripts/macos/install_big_sur.sh"
+        "scripts/macos/install_big_sur.sh",
+        "scripts/macos/cleanup_upgrade_installer.sh"
       ],
       "start_retry_timeout": "45m",
       "type": "shell"
@@ -89,14 +90,12 @@
     },
     {
       "environment_vars": [
-        "INSTALL_XCODE_CLI_TOOLS={{user `install_xcode_cli_tools`}}",
         "SSH_USERNAME={{ user `ssh_username` }}",
         "SSH_PASSWORD={{ user `ssh_password` }}"
       ],
       "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -S bash '{{ .Path }}'",
       "expect_disconnect": true,
       "scripts": [
-        "boxcutter/macos/script/xcode-cli-tools.sh",
         "scripts/macos/install_brew_req.sh",
         "scripts/macos/install_rvm_req.sh"
       ],
