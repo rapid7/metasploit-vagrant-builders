@@ -28,7 +28,7 @@
   ],
   "provisioners": [
     {
-      "destination": "/private/tmp/Install_macOS_11.7.2-20G1020.dmg",
+      "destination": "/private/tmp/Install_macOS_11.7.4-20G1120.dmg",
       "source": "{{user `iso_url`}}",
       "type": "file"
     },
@@ -41,7 +41,7 @@
       "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E -S bash '{{ .Path }}'",
       "expect_disconnect": true,
       "scripts": [
-        "scripts/macos/install_big_sur.sh",
+        "scripts/macos/install_macOS_upgrade.sh",
         "scripts/macos/cleanup_upgrade_installer.sh"
       ],
       "start_retry_timeout": "45m",

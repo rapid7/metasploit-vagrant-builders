@@ -4,7 +4,7 @@
   "cpus": "2",
   "disk_size": "32000",
   "memory": "2048",
-  "iso_url": "iso/Install_macOS_11.7.2-20G1020.dmg",
+  "iso_url": "iso/Install_macOS_11.7.4-20G1120.dmg",
   "parallels_guest_os_type": "win-8",
   "vagrantfile_template": "vagrant/vagrantfile-metasploitMacOSBuilder.tpl",
   "virtualbox_guest_os_type": "MacOS1015_64",
