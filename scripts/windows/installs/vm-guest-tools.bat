@@ -1,46 +1,48 @@
-reg Query "HKLM\Hardware\Description\System\CentralProcessor\0" | find /i "x86" > NUL && set OS=32BIT || set OS=64BIT
-
-if %OS%==32BIT (
-    if not exist "C:\Windows\Temp\7z1801.msi" (
-        powershell -Command "(New-Object System.Net.WebClient).DownloadFile('http://www.7-zip.org/a/7z1801.msi', 'C:\Windows\Temp\7z1801.msi')" <NUL
-    )
-)
-if %OS%==64BIT echo This is a 64bit operating system
-    if not exist "C:\Windows\Temp\7z1801.msi" (
-        powershell -Command "(New-Object System.Net.WebClient).DownloadFile('http://www.7-zip.org/a/7z1801-x64.msi', 'C:\Windows\Temp\7z1801.msi')" <NUL
-    )
-msiexec /qb /i C:\Windows\Temp\7z1801.msi
-
-if exist "C:\Users\vagrant\windows.iso" (
-    move /Y C:\Users\vagrant\windows.iso C:\Windows\Temp
+if not exist "C:\Program Files\7-Zip\7z.exe" (
+    powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; (New-Object System.Net.WebClient).DownloadFile('https://www.7-zip.org/a/7z1604-x64.msi', 'C:\Windows\Temp\7zInstaller-x64.msi')" <NUL
+    msiexec /qb /i C:\Windows\Temp\7zInstaller-x64.msi
 )
 
-wmic os get caption | find /i "7" > NUL && set TOOLS_VER=OLD || set TOOLS_VER=NEW
+if "%PACKER_BUILDER_TYPE%" equ "vmware-iso" goto :vmware
+if "%PACKER_BUILDER_TYPE%" equ "virtualbox-iso" goto :virtualbox
+if "%PACKER_BUILDER_TYPE%" equ "parallels-iso" goto :parallels
+goto :done
 
-if %TOOLS_VER%==NEW (
-  wmic os get caption | find /i "2008" > NUL && set TOOLS_VER=OLD || set TOOLS_VER=NEW
-)
+:vmware
 
 if not exist "C:\Windows\Temp\windows.iso" (
-    if %TOOLS_VER%==OLD (
-      powershell -Command "(New-Object System.Net.WebClient).DownloadFile('http://softwareupdate.vmware.com/cds/vmw-desktop/ws/12.0.0/2985596/windows/packages/tools-windows.tar', 'C:\Windows\Temp\vmware-tools.tar')" <NUL
-      cmd /c ""C:\Program Files\7-Zip\7z.exe" x C:\Windows\Temp\vmware-tools.tar -oC:\Windows\Temp"
-      FOR /r "C:\Windows\Temp" %%a in (VMware-tools-windows-*.iso) DO REN "%%~a" "windows.iso"
-    )
-    if not exist "C:\Windows\Temp\windows.iso" (
-      powershell -Command "(New-Object System.Net.WebClient).DownloadFile('https://packages.vmware.com/tools/esx/6.5u1/windows/VMware-tools-windows-10.1.7-5541682.iso', 'C:\Windows\Temp\windows.iso')" <NUL
-    )
+    powershell -Command "(New-Object System.Net.WebClient).DownloadFile('http://softwareupdate.vmware.com/cds/vmw-desktop/ws/12.0.0/2985596/windows/packages/tools-windows.tar', 'C:\Windows\Temp\vmware-tools.tar')" <NUL
+    cmd /c ""C:\Program Files\7-Zip\7z.exe" x C:\Windows\Temp\vmware-tools.tar -oC:\Windows\Temp"
+    FOR /r "C:\Windows\Temp" %%a in (VMware-tools-windows-*.iso) DO REN "%%~a" "windows.iso"
+    rd /S /Q "C:\Program Files (x86)\VMWare"
 )
 
 cmd /c ""C:\Program Files\7-Zip\7z.exe" x "C:\Windows\Temp\windows.iso" -oC:\Windows\Temp\VMWare"
+cmd /c C:\Windows\Temp\VMWare\setup.exe /S /v"/qn REBOOT=R\"
 
-if %OS%==64BIT (
-    cmd /c C:\Windows\Temp\VMWare\setup64.exe /S /v "/qn /l*v ""%TEMP%\vmmsi.log"" REBOOT=R ADDLOCAL=ALL"
-    goto :done
+goto :done
+
+:virtualbox
+
+move /Y C:\Users\vagrant\VBoxGuestAdditions.iso C:\Windows\Temp
+cmd /c ""C:\Program Files\7-Zip\7z.exe" x C:\Windows\Temp\VBoxGuestAdditions.iso -oC:\Windows\Temp\virtualbox"
+
+:: There needs to be Oracle CA (Certificate Authority) certificates installed in order
+:: to prevent user intervention popups which will undermine a silent installation.
+cmd /c certutil -addstore -f "TrustedPublisher" C:\Windows\Temp\virtualbox\cert\vbox-sha1.cer
+
+cmd /c C:\Windows\Temp\virtualbox\VBoxWindowsAdditions.exe /S
+goto :done
+
+:parallels
+if exist "C:\Users\vagrant\prl-tools-win.iso" (
+	move /Y C:\Users\vagrant\prl-tools-win.iso C:\Windows\Temp
+	cmd /C "C:\Program Files\7-Zip\7z.exe" x C:\Windows\Temp\prl-tools-win.iso -oC:\Windows\Temp\parallels
+	cmd /C C:\Windows\Temp\parallels\PTAgent.exe /install_silent
+	rd /S /Q "c:\Windows\Temp\parallels"
 )
 
-cmd /c C:\Windows\Temp\VMWare\setup.exe /S /v "/qn /l*v ""%TEMP%\vmmsi.log"" REBOOT=R ADDLOCAL=ALL"
-
 :done
-
-msiexec /qb /x C:\Windows\Temp\7z1801.msi
+if exist "C:\Windows\Temp\7zInstaller-x64.msi" (
+    msiexec /qb /x C:\Windows\Temp\7zInstaller-x64.msi
+)
