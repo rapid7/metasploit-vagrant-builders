@@ -8,5 +8,5 @@
   "virtualbox_guest_os_type": "Windows10_64",
   "vm_name": "metasploitWindowsBuilder",
   "os_key": "W269N-WFGWX-YVC9B-4J6C9-T83GX",
-  "version": "1.0.5"
+  "version": "1.0.6"
 }
