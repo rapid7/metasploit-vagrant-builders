@@ -5,3 +5,4 @@
 /iso
 /esxi_config.json
 /*.log
+/resources/authorized_keys
