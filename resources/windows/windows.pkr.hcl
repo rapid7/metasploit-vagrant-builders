@@ -117,7 +117,7 @@ build {
   provisioner "powershell" {
     elevated_user     = var.install_user
     elevated_password = var.install_pass
-    inline            = ["cp C:/vagrant/resources/authorized_keys C:/Users/vagrant/.ssh/authorized_keys"]
+    scripts            = ["scripts/windows/configs/ssh-auth.ps1"]
   }
 
   provisioner "powershell" {

@@ -121,12 +121,17 @@
       "remote_path": "/tmp/script.bat",
       "scripts": [
         "./scripts/windows/configs/update_root_certs.bat",
-        "./scripts/windows/configs/vagrant-ssh.bat",
         "./scripts/windows/configs/disable-auto-logon.bat",
         "./scripts/windows/configs/disable-firewall.bat",
         "./scripts/windows/configs/enable-rdp.bat"
       ],
       "type": "shell"
+    },
+    {
+      "scripts": [
+        "scripts/windows/configs/ssh-auth.ps1"
+      ],
+      "type": "powershell"
     },
     {
       "type": "windows-restart"
