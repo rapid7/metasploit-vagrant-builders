@@ -1,0 +1,16 @@
+---
+info:
+  title: Metasploit Vagrant Builders
+  description: Build tools to generate vagrant images used by metasploit-framework
+    CI
+  x-cortex-git:
+    github:
+      alias: r7org
+      repository: rapid7/metasploit-vagrant-builders
+  x-cortex-tag: metasploit-vagrant-builders
+  x-cortex-type: service
+  x-cortex-domain-parents:
+  - tag: metasploit
+openapi: 3.0.1
+servers:
+- url: "/"
