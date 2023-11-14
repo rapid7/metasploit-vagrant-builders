@@ -1,3 +1,12 @@
+packer {
+  required_plugins {
+    amazon = {
+      source  = "github.com/hashicorp/amazon"
+      version = ">= 1.2.6"
+    }
+  }
+}
+
 variable "aws_access_key" {
   type    = string
   default = "${env("AWS_ACCESS_KEY_ID")}"
@@ -16,11 +25,23 @@ variable "region" {
 variable "install_user" {
   type    = string
   default = "vagrant"
+  description = <<EOF
+The name of a temporarily created Administrator account used for provisioning
+EOF
 }
 
 variable "install_pass" {
-  type    = string
-  default = "P@ssw0rd"
+  type = string
+  description = <<EOF
+The password of a temporarily created Administrator account used for provisioning - see install_user.
+This password should not be a commonly used password or easy to guess as it will be accessible on
+the runtime ec2 instance during the packer build process via the resolved host IP
+EOF
+  sensitive = true
+  validation {
+    condition = length(var.install_pass) > 12 && length(var.install_pass) <= 14
+    error_message = "The install_var value must have a complexity of 12-14."
+  }
 }
 
 source "amazon-ebs" "win-source" {
@@ -35,17 +56,24 @@ source "amazon-ebs" "win-source" {
   winrm_username = local.win_factory.user
   winrm_insecure = true
   winrm_use_ssl  = true
+  // By default Packer creates a default security group of [0.0.0.0/0] to access the instance
+  // Setting this value to true ensures only the public IP of the host can access the instance
+  temporary_security_group_source_public_ip = true
   launch_block_device_mappings {
     delete_on_termination = true
     device_name           = "/dev/sda1"
     volume_size           = 60
     volume_type           = "gp2"
   }
+  run_volume_tags = {
+    Name    = source.name
+    Version = local.version
+  }
 }
 
 locals {
   instance_type = "t2.medium"
-  version       = "1.0.6"
+  version       = "1.0.7"
   win_factory = {
     owner = "amazon"
     user  = "Administrator"
@@ -81,7 +109,16 @@ build {
         Name    = source.value.name
         Version = local.version
       }
+      run_tags = {
+        Name    = source.value.name
+        Version = local.version
+      }
     }
+  }
+
+  provisioner "powershell" {
+    inline = ["net user ${var.install_user} ${var.install_pass} /ADD",
+              "net localgroup 'Administrators' ${var.install_user} /ADD"]
   }
 
   provisioner "file" {
@@ -93,12 +130,6 @@ build {
   provisioner "file" {
     destination = "C:/vagrant"
     source      = "resources"
-  }
-
-
-  provisioner "powershell" {
-    inline = ["net user ${var.install_user} ${var.install_pass} /ADD",
-              "net localgroup 'Administrators' ${var.install_user} /ADD"]
   }
 
   provisioner "powershell" {
