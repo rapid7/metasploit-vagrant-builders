@@ -1,2 +1,2 @@
-choco install -y ruby --version 2.6.5.1
+choco install -y ruby --version 3.1.3.1
 refreshenv
