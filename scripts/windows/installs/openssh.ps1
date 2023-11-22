@@ -2,6 +2,9 @@ param (
   [switch]$AutoStart = $false
 )
 
+# Exit if a cmdlet fails
+$ErrorActionPreference = "Stop"
+
 Write-Output "AutoStart: $AutoStart"
 $is_64bit = [IntPtr]::size -eq 8
 

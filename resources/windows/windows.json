@@ -149,11 +149,11 @@
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "remote_path": "C:/Windows/Temp/script.bat",
       "scripts": [
-        "scripts/windows/installs/install_boxstarter.bat",
-        "scripts/windows/installs/7zip.bat",
-        "scripts/windows/installs/vcredist2008.bat"
+        "scripts/windows/installs/install_boxstarter.ps1",
+        "scripts/windows/installs/7zip.ps1",
+        "scripts/windows/installs/vcredist2008.ps1"
       ],
-      "type": "windows-shell"
+      "type": "powershell"
     },
     {
       "type": "windows-restart"
@@ -162,11 +162,11 @@
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "remote_path": "C:/Windows/Temp/script.bat",
       "scripts": [
-        "scripts/windows/installs/git.bat",
-        "scripts/windows/installs/mingw-64.bat",
-        "scripts/windows/installs/msys2.bat"
+        "scripts/windows/installs/git.ps1",
+        "scripts/windows/installs/mingw-64.ps1",
+        "scripts/windows/installs/msys2.ps1"
       ],
-      "type": "windows-shell"
+      "type": "powershell"
     },
     {
       "type": "windows-restart"
@@ -175,12 +175,12 @@
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "remote_path": "C:/Windows/Temp/script.bat",
       "scripts": [
-        "scripts/windows/installs/java.bat",
-        "scripts/windows/installs/install_ruby.bat",
-        "scripts/windows/installs/ruby_devkit.bat",
-        "scripts/windows/installs/wixtoolset.bat"
+        "scripts/windows/installs/java.ps1",
+        "scripts/windows/installs/install_ruby.ps1",
+        "scripts/windows/installs/ruby_devkit.ps1",
+        "scripts/windows/installs/wixtoolset.ps1"
       ],
-      "type": "windows-shell"
+      "type": "powershell"
     },
     {
       "type": "windows-restart"
@@ -198,8 +198,8 @@
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "remote_path": "C:/Windows/Temp/script.bat",
       "scripts": [
-        "scripts/windows/installs/python2.bat",
-        "scripts/windows/installs/python3.bat"
+        "scripts/windows/installs/python2.ps1",
+        "scripts/windows/installs/python3.ps1"
       ],
       "type": "windows-shell"
     },
@@ -210,7 +210,7 @@
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "remote_path": "C:/Windows/Temp/script.bat",
       "scripts": [
-        "scripts/windows/installs/vm-guest-tools.bat",
+        "scripts/windows/installs/vm-guest-tools.ps1",
         "scripts/windows/configs/set_path.bat",
         "scripts/windows/configs/prep_omnibus.bat",
         "scripts/windows/configs/packer_cleanup.bat"
