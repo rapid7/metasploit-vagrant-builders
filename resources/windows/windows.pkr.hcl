@@ -7,6 +7,14 @@ packer {
   }
 }
 
+variable "force_deregister" {
+  default = false
+}
+
+variable "force_delete_snapshot" {
+  default = false
+}
+
 variable "aws_access_key" {
   type    = string
   default = "${env("AWS_ACCESS_KEY_ID")}"
@@ -50,8 +58,8 @@ variable "version" {
 }
 
 source "amazon-ebs" "win-source" {
-  force_deregister      = true
-  force_delete_snapshot = true
+  force_deregister      = "${var.force_deregister}"
+  force_delete_snapshot = "${var.force_delete_snapshot}"
   access_key     = var.aws_access_key
   communicator   = "winrm"
   instance_type  = local.instance_type
