@@ -42,7 +42,12 @@ packer validate -var "install_pass=${INSTALL_PASS}" resources/windows/windows.pk
 packer build -var "install_pass=${INSTALL_PASS}" resources/windows/windows.pkr.hcl
 ```
 
-This will create a new AMI, and replace the existing AMI if present.
+This will create a new AMI, and replace the existing AMI if present:
+
+```
+# Replace an existing AMI. Warning - do this only if you are creating a new unused version:
+packer build -var "install_pass=${INSTALL_PASS}" -var "force_deregister=true" -var "force_delete_snapshot=true" resources/windows/windows.pkr.hcl
+```
 
 ### Debugging
 
