@@ -7,6 +7,14 @@ packer {
   }
 }
 
+variable "force_deregister" {
+  default = false
+}
+
+variable "force_delete_snapshot" {
+  default = false
+}
+
 variable "aws_access_key" {
   type    = string
   default = "${env("AWS_ACCESS_KEY_ID")}"
@@ -44,9 +52,14 @@ EOF
   }
 }
 
+variable "version" {
+  type = string
+  default = "1.0.8"
+}
+
 source "amazon-ebs" "win-source" {
-  force_deregister      = true
-  force_delete_snapshot = true
+  force_deregister      = "${var.force_deregister}"
+  force_delete_snapshot = "${var.force_delete_snapshot}"
   access_key     = var.aws_access_key
   communicator   = "winrm"
   instance_type  = local.instance_type
@@ -67,13 +80,14 @@ source "amazon-ebs" "win-source" {
   }
   run_volume_tags = {
     Name    = source.name
-    Version = local.version
+    Version = var.version
+    Timestamp = local.timestamp
   }
 }
 
 locals {
   instance_type = "t2.medium"
-  version       = "1.0.7"
+  timestamp = regex_replace(timestamp(), "[- TZ:]", "")
   win_factory = {
     owner = "amazon"
     user  = "Administrator"
@@ -81,6 +95,7 @@ locals {
       {
         filter = "*Windows_Server-2019-English-Core-Base*"
         name   = "metasploit-windows-builder"
+        version = var.version
       }
     ]
   }
@@ -94,8 +109,9 @@ build {
     for_each = local.win_factory.images
     labels   = ["amazon-ebs.win-source"]
     content {
-      ami_name = source.value.name
-      name     = source.value.name
+      # Specify the the AMI name, i.e. metasploit-windows-builder-1.0.8
+      ami_name = "${source.value.name}-${source.value.version}"
+      name     = "${source.value.name}-${source.value.version}"
       source_ami_filter {
         filters = {
           name                = source.value.filter
@@ -107,11 +123,13 @@ build {
       }
       tags = {
         Name    = source.value.name
-        Version = local.version
+        Version = source.value.version
+        Timestamp = local.timestamp
       }
       run_tags = {
         Name    = source.value.name
-        Version = local.version
+        Version = source.value.version
+        Timestamp = local.timestamp
       }
     }
   }
@@ -163,9 +181,9 @@ build {
   provisioner "powershell" {
     elevated_user     = var.install_user
     elevated_password = var.install_pass
-    scripts           = ["scripts/windows/installs/install_boxstarter.bat",
-                         "scripts/windows/installs/7zip.bat",
-                         "scripts/windows/installs/vcredist2008.bat"]
+    scripts           = ["scripts/windows/installs/install_boxstarter.ps1",
+                         "scripts/windows/installs/7zip.ps1",
+                         "scripts/windows/installs/vcredist2008.ps1"]
   }
 
   provisioner "windows-restart" {
@@ -174,9 +192,9 @@ build {
   provisioner "powershell" {
     elevated_user     = var.install_user
     elevated_password = var.install_pass
-    scripts           = ["scripts/windows/installs/git.bat",
-                         "scripts/windows/installs/mingw-64.bat",
-                         "scripts/windows/installs/msys2.bat"]
+    scripts           = ["scripts/windows/installs/git.ps1",
+                         "scripts/windows/installs/mingw-64.ps1",
+                         "scripts/windows/installs/msys2.ps1"]
   }
 
   provisioner "powershell" {
@@ -196,10 +214,10 @@ build {
   provisioner "powershell" {
     elevated_user   = var.install_user
     elevated_password = var.install_pass
-    scripts         = ["scripts/windows/installs/java.bat",
-                       "scripts/windows/installs/install_ruby.bat",
-                       "scripts/windows/installs/ruby_devkit.bat",
-                       "scripts/windows/installs/wixtoolset.bat"]
+    scripts         = ["scripts/windows/installs/java.ps1",
+                        "scripts/windows/installs/install_ruby.ps1",
+                       "scripts/windows/installs/ruby_devkit.ps1",
+                       "scripts/windows/installs/wixtoolset.ps1"]
   }
 
   provisioner "windows-restart" {
@@ -217,8 +235,8 @@ build {
   provisioner "powershell" {
     elevated_user     = var.install_user
     elevated_password = var.install_pass
-    scripts           = ["scripts/windows/installs/python2.bat",
-                         "scripts/windows/installs/python3.bat"]
+    scripts           = ["scripts/windows/installs/python2.ps1",
+                         "scripts/windows/installs/python3.ps1"]
   }
 
   provisioner "windows-restart" {

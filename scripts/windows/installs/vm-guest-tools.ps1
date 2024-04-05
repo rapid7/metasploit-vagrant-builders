@@ -1,3 +1,6 @@
+# Exit if a cmdlet fails
+$ErrorActionPreference = "Stop"
+
 if not exist "C:\Program Files\7-Zip\7z.exe" (
     powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; (New-Object System.Net.WebClient).DownloadFile('https://www.7-zip.org/a/7z1604-x64.msi', 'C:\Windows\Temp\7zInstaller-x64.msi')" <NUL
     msiexec /qb /i C:\Windows\Temp\7zInstaller-x64.msi

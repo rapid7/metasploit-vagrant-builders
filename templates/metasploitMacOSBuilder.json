@@ -9,5 +9,5 @@
   "vagrantfile_template": "vagrant/vagrantfile-metasploitMacOSBuilder.tpl",
   "virtualbox_guest_os_type": "MacOS1015_64",
   "vmware_guest_os_type": "darwin18-64",
-  "version": "1.0.7"
+  "version": "1.0.8"
 }
