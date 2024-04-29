@@ -10,10 +10,11 @@ To build locally first install `packer`.
 
 To build the macOS and Windows systems locally:
 
-* install `vmware_desktop` or `virtualbox`
-* if using `virtualbox` update the `templates\metasploitMacOSBuilder.json` `vagrant_provider` to `virtualbox`
-* manually source the macOS/Windows ISO files
-* execute `./buildBoxes.sh`
+* Install `vmware_desktop` or `virtualbox`
+* If using `virtualbox` update the `templates\metasploitMacOSBuilder.json` `vagrant_provider` to `virtualbox`
+* Add a `authorized_keys` file (this is required to build, see [Security considerations](#security-considerations) section for more information)
+* Manually source the macOS/Windows ISO files
+* Execute `./buildBoxes.sh`
 
 Build systems for macOS can only be created on macOS.
 
@@ -36,17 +37,17 @@ echo "The temporary WinRM credentials will be: vagrant:${INSTALL_PASS}"
 packer init resources/windows/windows.pkr.hcl
 
 # Validate the packer configuration
-packer validate -var "install_pass=${INSTALL_PASS}" resources/windows/windows.pkr.hcl
+packer validate -var "install_pass=${INSTALL_PASS}" -var "authorized_keys_path=./resources/authorized_keys" resources/windows/windows.pkr.hcl
 
 # Build on AWS
-packer build -var "install_pass=${INSTALL_PASS}" resources/windows/windows.pkr.hcl
+packer build -var "install_pass=${INSTALL_PASS}" -var "authorized_keys_path=./resources/authorized_keys" resources/windows/windows.pkr.hcl
 ```
 
 This will create a new AMI, and replace the existing AMI if present:
 
 ```
 # Replace an existing AMI. Warning - do this only if you are creating a new unused version:
-packer build -var "install_pass=${INSTALL_PASS}" -var "force_deregister=true" -var "force_delete_snapshot=true" resources/windows/windows.pkr.hcl
+packer build -var "install_pass=${INSTALL_PASS}" -var "authorized_keys_path=./resources/authorized_keys" -var "force_deregister=true" -var "force_delete_snapshot=true" resources/windows/windows.pkr.hcl
 ```
 
 ### Debugging
@@ -54,7 +55,7 @@ packer build -var "install_pass=${INSTALL_PASS}" -var "force_deregister=true" -v
 To debug a failing build you can use the `-on-error=ask` flag:
 
 ```
-packer build -var "install_pass=${INSTALL_PASS}" -on-error=ask resources/windows/windows.pkr.hcl
+packer build -var "install_pass=${INSTALL_PASS}" -var "authorized_keys_path=./resources/authorized_keys" -on-error=ask resources/windows/windows.pkr.hcl
 ```
 
 You can remote into the machine via WinRM tooling, potentially via Metasploit:
@@ -81,7 +82,7 @@ The `-debug` flag can be used to pause at each step as well, which will extract 
 not just the temporary Administrator account that is created:
 
 ```
-$ packer build -var "install_pass=${INSTALL_PASS}" -debug -on-error=ask resources/windows/windows.pkr.hcl
+$ packer build -var "install_pass=${INSTALL_PASS}" -var "authorized_keys_path=./resources/authorized_keys" -debug -on-error=ask resources/windows/windows.pkr.hcl
 ...
 ==> win-builder-base.amazon-ebs.metasploit-windows-builder: Waiting for instance (i-0f18b8be1c11b0893) to become ready...
 win-builder-base.amazon-ebs.metasploit-windows-builder: Public DNS: ec2-50-18-26-233.us-west-1.compute.amazonaws.com
@@ -101,16 +102,21 @@ See more details in the [documentation](https://github.com/hashicorp/packer/blob
 
 ### Security considerations
 
-By default the created AMI may have both a weak password and allow access with [vagrant's "insecure" keypairs](https://github.com/hashicorp/vagrant/tree/9b460ecedefa45a557b1c13c63449839819dc220/keys#insecure-keypairs)
-Therefore, when using/creating these boxes ensure that they are not publicly accessible, and are at the very least behind a restricted security group (i.e. limited to office/host IP addresses).
+The created AMI will require an SSH authorized key to be able to log into the box - by default this is set to `./resources/authorized_keys`. If you are a Rapid7 Metasploit maintainer, pre-existing keys have been made available to you via an internal password manager.
+
+Hashicorp does offer [vagrant's "insecure" keypairs](https://github.com/hashicorp/vagrant/tree/9b460ecedefa45a557b1c13c63449839819dc220/keys#insecure-keypairs), which are weak credentials and allow anyone with vagrant's "insecure" keypairs to access the machine. **This is not advised and is not secure**, if this method is chosen you should at the very least behind a restricted security group (i.e. limited to office/host IP addresses).
+
+Example of adding the keys to the `./resources/authorized_keys` file and SSH'ing in via Vagrant's private key, **again this is not secure**:
+
+Add the keys:
+```bash
+curl https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub  > ./resources/authorized_keys
+```
 
 Example of SSH'ing in via Vagrant's private key:
-
 ```bash
 curl -L -o ./vagrant_key https://raw.githubusercontent.com/hashicorp/vagrant/main/keys/vagrant
 chmod 600 ./vagrant_key
 
 ssh -o PubkeyAcceptedKeyTypes=ssh-rsa -v -i ./vagrant_key vagrant@ec2-54-215-236-141.us-west-1.compute.amazonaws.com
 ```
-
-If you're working with a team or company or with a custom box and you want more secure SSH, you should create your own keypair and configure `resources/authorized_keys`

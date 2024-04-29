@@ -57,6 +57,11 @@ variable "version" {
   default = "1.0.8"
 }
 
+variable "authorized_keys_path" {
+  type    = string
+  default = "resources/authorized_keys"
+}
+
 source "amazon-ebs" "win-source" {
   force_deregister      = "${var.force_deregister}"
   force_delete_snapshot = "${var.force_delete_snapshot}"
@@ -93,7 +98,7 @@ locals {
     user  = "Administrator"
     images = [
       {
-        filter = "*Windows_Server-2019-English-Core-Base*"
+        filter = "Windows_Server-2019-English-Core-Base*"
         name   = "metasploit-windows-builder"
         version = var.version
       }
@@ -163,10 +168,9 @@ build {
   provisioner "windows-restart" {
   }
 
-  provisioner "powershell" {
-    elevated_user     = var.install_user
-    elevated_password = var.install_pass
-    scripts            = ["scripts/windows/configs/ssh-auth.ps1"]
+    provisioner "file" {
+    source      = var.authorized_keys_path
+    destination = "C:/Users/vagrant/.ssh/authorized_keys"
   }
 
   provisioner "powershell" {
