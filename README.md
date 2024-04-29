@@ -8,19 +8,127 @@ To build locally first install `packer`.
 
 ### Local building
 
-To build the macOS and Windows systems locally:
+Windows is currently built remotely on AWS, but OSX must be built locally. It is possible to build the macOS and Windows systems locally:
 
+* `git submodule update --init`
 * Install `vmware_desktop` or `virtualbox`
 * If using `virtualbox` update the `templates\metasploitMacOSBuilder.json` `vagrant_provider` to `virtualbox`
 * Add a `authorized_keys` file (this is required to build, see [Security considerations](#security-considerations) section for more information)
-* Manually source the macOS/Windows ISO files
+* Manually source the macOS/Windows ISO files (Steps for OSX below)
 * Execute `./buildBoxes.sh`
-
-Build systems for macOS can only be created on macOS.
+* To debug a failing build you can use the `-on-error=ask` packer flag to inspect a failed VM, or the `PACKER_LOG=1` environment variable to log vagrant commands and their results
 
 In some cases importing the seed macOS source box currently from vagrantcloud into your vagrant environment may be need.
-
 The project is currently utilizing a prebuild macinabox image referenced in `resources/macos/macos.json`
+
+Build systems for macOS can only be created on macOS and requires a `.dmg` file:
+
+```shell
+# Find available software
+softwareupdate --list-full-installers
+
+# Download the required version
+softwareupdate --fetch-full-installer --full-installer-version 11.7.10
+
+# Create a new sparse disk image
+hdiutil create -o 'Install_macOS_11.7.10' -size 16384m -volname Install_macOS_11.7.10 -layout SPUD -fs HFS+J
+
+# Mount the dmg
+hdiutil attach Install_macOS_11.7.10.dmg -noverify -mountpoint '/Volumes/Big Sur'
+
+# Create intstall media dmg
+sudo /Applications/Install\ macOS\ Big\ Sur.app/Contents/Resources/createinstallmedia --volume '/Volumes/Big Sur'
+
+# Detatch the bootable installer
+hdiutil detach -force '/Volumes/Big Sur'
+```
+
+If your target virtualization environment is running an older ESXi version (i.e. 6.7 or below) - it may be easier to create the base
+vagrant VM directly in ESXi first:
+
+```
+# Pull the base box:
+vagrant box add --box-version 2020.08.21 --provider vmware_desktop ekai-upt/macos-catalina
+
+# Move into the VM directory:
+cd ~/.vagrant.d/boxes/ekai-upt-VAGRANTSLASH-macos-catalina/2020.08.21/vmware_desktop
+
+# Create a new VM on ESXi:
+time /Applications/VMware\ Fusion.app/Contents/Library/VMware\ OVF\ Tool/ovftool \
+    --overwrite \
+    --diskMode=thin \
+    --numberOfCpus:'*'=4 \
+    --memorySize:'*'=8192 \
+    --maxVirtualHardwareVersion=15 \
+    --network=<network> \
+    --datastore=<datastore> \
+    --vmFolder=Metasploit \
+    --compress=9 \
+    --name=metasploitMacOSBuilder-<version>  \
+    macinbox.vmx \
+    vi://<vcenter_host>:443/<datacenter>/host/<esxi_host>/
+```
+
+Then Resize the VM on VSphere from 64gb to 84gb, boot it - and run disktuil `diskutil apfs resizeContainer disk0s2 84G`.
+Then remotely provision the VM with packer's [null builder](https://developer.hashicorp.com/packer/docs/builders/null):
+
+```json5
+{
+  "_command": "Build with `packer build macos.json`",
+  "builders": [
+    {
+      "type": "null",
+      "ssh_host": "x.x.x.x",
+      "ssh_username": "{{ user `ssh_username` }}",
+      "ssh_password": "{{ user `ssh_password` }}"
+    }
+  ]
+  // ...
+}
+```
+
+This ensures that the created VM is compatible with with the host's hypervisor. This fixes an issue of building locally with
+a newer VMWare fusion version may leave a VM that isn't bootable on a remote ESXi server. macOS provisioning take ~4 hours to finish.
+
+Then execute packer:
+
+```
+PACKER_LOG=1 packer build -on-error=abort -var-file=templates/metasploitMacOSBuilder.json resources/macos/macos.json
+```
+
+If you've remotely provisioned an existing ESXi target - you will want to convert the VM to a template afterwards.
+
+Example of testing the locally built OSX box:
+
+```shell
+vagrant box add metasploitMacOSBuilder-1.0.8 ./box/vmware_desktop/metasploitMacOSBuilder-1.0.8.box
+vagrant init metasploitMacOSBuilder-1.0.8
+vagrant up --provider=vmware_desktop
+vagrant ssh
+```
+
+Example of uploading a locally built Vagrant box to vSphere with vmware's `ovftool`:
+
+```
+# Extract the box; to gain access to the box.vmx metadata file:
+tar xvf metasploitMacOSBuilder-1.0.8.box
+
+# Upload to vSphere
+/Applications/VMware\ Fusion.app/Contents/Library/VMware\ OVF\ Tool/ovftool \
+    --overwrite \
+    --diskMode=thin \
+    --numberOfCpus:'*'=4 \
+    --memorySize:'*'=8192 \
+    --maxVirtualHardwareVersion=15 \
+    --network=<network> \
+    --datastore=<datastore> \
+    --importAsTemplate \
+    --vmFolder=Metasploit \
+    --compress=9 \
+    --name=metasploitMacOSBuilder-<version>  \
+    box.vmx \
+    vi://<vcenter_host>:443/<datacenter>/host/<esxi_host>/
+```
 
 ### Building remotely
 
@@ -52,7 +160,7 @@ packer build -var "install_pass=${INSTALL_PASS}" -var "authorized_keys_path=./re
 
 ### Debugging
 
-To debug a failing build you can use the `-on-error=ask` flag:
+To debug a failing build you can use the `-on-error=ask` flag or the `PACKER_LOG=1` environment variable:
 
 ```
 packer build -var "install_pass=${INSTALL_PASS}" -var "authorized_keys_path=./resources/authorized_keys" -on-error=ask resources/windows/windows.pkr.hcl

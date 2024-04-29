@@ -1,6 +1,6 @@
 #!/bin/bash
 
-open /private/tmp/Install_macOS_11.7.4-20G1120.dmg
+open /private/tmp/Install_macOS_11.7.10.dmg
 until [ -d /Volumes/Install\ macOS\ Big\ Sur ]
 do
   sleep 5
