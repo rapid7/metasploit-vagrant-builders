@@ -128,10 +128,9 @@
       "type": "shell"
     },
     {
-      "scripts": [
-        "scripts/windows/configs/ssh-auth.ps1"
-      ],
-      "type": "powershell"
+      "destination": "C:/Users/vagrant/.ssh/authorized_keys",
+      "source": "{{user `authorized_keys_path`}}",
+      "type": "file"
     },
     {
       "type": "windows-restart"
