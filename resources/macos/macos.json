@@ -28,7 +28,7 @@
   ],
   "provisioners": [
     {
-      "destination": "/private/tmp/Install_macOS_11.7.4-20G1120.dmg",
+      "destination": "/private/tmp/Install_macOS_11.7.10.dmg",
       "source": "{{user `iso_url`}}",
       "type": "file"
     },
