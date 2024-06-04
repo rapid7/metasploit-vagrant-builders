@@ -54,7 +54,7 @@ EOF
 
 variable "version" {
   type = string
-  default = "1.0.8"
+  default = "1.0.9"
 }
 
 variable "authorized_keys_path" {
@@ -230,7 +230,7 @@ build {
   provisioner "powershell" {
     elevated_user     = var.install_user
     elevated_password = var.install_pass
-    scripts           = ["scripts/windows/installs/vs2013.ps1"]
+    scripts           = ["scripts/windows/installs/vs2019.ps1"]
   }
 
   provisioner "windows-restart" {
