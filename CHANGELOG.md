@@ -1,8 +1,13 @@
 # Changelog
 
+## 1.0.10
+
+- Install Visual Studio 2013 alongside 2019
+- Install cmake
+
 ## 1.0.9
 
-- Update Visual Studio 2013 to 2019; Compile Nmap 7.95
+- Update Visual Studio 2013 to 2019
 - Update Ruby on Windows to 3.0.7 (Security Patch)
 
 ## 1.0.8
