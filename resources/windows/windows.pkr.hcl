@@ -243,8 +243,8 @@ build {
     scripts           = ["scripts/windows/installs/vs2013.ps1"]
   }
 
-provisioner "windows-restart" {
-}
+  provisioner "windows-restart" {
+  }
 
   provisioner "powershell" {
     elevated_user     = var.install_user
