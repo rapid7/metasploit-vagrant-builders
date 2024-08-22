@@ -54,7 +54,7 @@ EOF
 
 variable "version" {
   type = string
-  default = "1.0.9"
+  default = "1.0.10"
 }
 
 variable "authorized_keys_path" {
@@ -187,7 +187,8 @@ build {
     elevated_password = var.install_pass
     scripts           = ["scripts/windows/installs/install_boxstarter.ps1",
                          "scripts/windows/installs/7zip.ps1",
-                         "scripts/windows/installs/vcredist2008.ps1"]
+                         "scripts/windows/installs/vcredist2008.ps1",
+                         "scripts/windows/installs/cmake.ps1"]
   }
 
   provisioner "windows-restart" {
@@ -231,6 +232,15 @@ build {
     elevated_user     = var.install_user
     elevated_password = var.install_pass
     scripts           = ["scripts/windows/installs/vs2019.ps1"]
+  }
+
+  provisioner "windows-restart" {
+  }
+
+  provisioner "powershell" {
+    elevated_user     = var.install_user
+    elevated_password = var.install_pass
+    scripts           = ["scripts/windows/installs/vs2013.ps1"]
   }
 
   provisioner "windows-restart" {

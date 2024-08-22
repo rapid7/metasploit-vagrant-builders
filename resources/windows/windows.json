@@ -150,7 +150,8 @@
       "scripts": [
         "scripts/windows/installs/install_boxstarter.ps1",
         "scripts/windows/installs/7zip.ps1",
-        "scripts/windows/installs/vcredist2008.ps1"
+        "scripts/windows/installs/vcredist2008.ps1",
+        "scripts/windows/installs/cmake.ps1"
       ],
       "type": "powershell"
     },
@@ -187,6 +188,15 @@
     {
       "scripts": [
         "scripts/windows/installs/vs2019.ps1"
+      ],
+      "type": "powershell"
+    },
+    {
+      "type": "windows-restart"
+    },
+    {
+      "scripts": [
+        "scripts/windows/installs/vs2013.ps1"
       ],
       "type": "powershell"
     },
