@@ -120,6 +120,7 @@
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "remote_path": "/tmp/script.bat",
       "scripts": [
+        "./scripts/windows/configs/enable-long-paths.bat",
         "./scripts/windows/configs/update_root_certs.bat",
         "./scripts/windows/configs/disable-auto-logon.bat",
         "./scripts/windows/configs/disable-firewall.bat",

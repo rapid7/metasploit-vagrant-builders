@@ -1,6 +1,6 @@
 {
-  "iso_url": "./iso/en_windows_10_consumer_editions_version_1803_updated_march_2018_x64_dvd_12063379.iso",
-  "iso_checksum": "986e2e17cf6b0b49141cd15699768e6e",
+  "iso_url": "./iso/en-us_windows_10_consumer_editions_version_21h2_x64_dvd_6cfdb144.iso",
+  "iso_checksum": "823c3cb59ff0fd43272f12bb2e3a089d",
   "iso_checksum_type": "md5",
   "autounattend": "./resources/windows/answer_files/Autounattend.xml",
   "vagrantfile_template": "./vagrant/vagrantfile-metasploitWindowsBuilder.tpl",
@@ -8,6 +8,6 @@
   "virtualbox_guest_os_type": "Windows10_64",
   "vm_name": "metasploitWindowsBuilder",
   "os_key": "W269N-WFGWX-YVC9B-4J6C9-T83GX",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "authorized_keys_path": "resources/authorized_keys"
 }

@@ -158,7 +158,8 @@ build {
   provisioner "powershell" {
     elevated_user     = var.install_user
     elevated_password = var.install_pass
-    scripts           = ["./scripts/windows/configs/update_root_certs.bat",
+    scripts           = ["./scripts/windows/configs/enable-long-paths.bat",
+                         "./scripts/windows/configs/update_root_certs.bat",
                          "./scripts/windows/configs/disable-auto-logon.bat",
                          "./scripts/windows/configs/disable-firewall.bat",
                          "./scripts/windows/configs/enable-rdp.bat",
